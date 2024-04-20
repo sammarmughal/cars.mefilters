@@ -67,9 +67,8 @@ const Cars = () => {
     return params.get("states") || "";
   });
 
-  const [selectedStateId, setSelectedStateId] = useState(
-    JSON.parse(sessionStorage.getItem("selectedStateId")) || []
-  );
+  const [selectedStateId, setSelectedStateId] = useState([]);
+  const [selectedState, setSelectedState] = useState([]);
   const [city, setCity] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -117,6 +116,9 @@ const Cars = () => {
     setMileageTo(params.get("mileage_to" || ""));
     setYearFrom(params.get("year_from" || ""));
     setYearTo(params.get("year_to" || ""));
+    setSelectedMakeId(params.get("makes") ? Number(params.get("makes")) : "");
+    console.log({params.get});
+
   }, [params]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchObject, setSearchObject] = useState({
@@ -136,7 +138,6 @@ const Cars = () => {
   //   ? JSON.parse(initialSelectedState)
   //   : [];
 
-  const [selectedState, setSelectedState] = useState([]);
   useEffect(() => {
     const storedState = localStorage.getItem("isHeartFilled");
     if (storedState !== null) {
@@ -225,9 +226,13 @@ const Cars = () => {
     window.history.pushState({}, "", "?" + queryParams.toString());
   };
   const handleMakeChange = (selectedOption) => {
-    setSelectedMakeId(selectedOption.value);
-    // sessionStorage.setItem("selectedMakeId", selectedOption.value);
+    // setSelectedMakeId(selectedOption.value);
+    
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set("makes", selectedOption.value);
+    window.history.pushState({}, "", "?" + queryParams.toString());
   };
+  console.log({selectedMakeId});
 
   const handleCityChange = (selectedOptions) => {
     selectedOptions = Array.isArray(selectedOptions)
@@ -476,8 +481,8 @@ const Cars = () => {
             }
           });
         }
-        if (selectedStateId) {
-          queryParams.set("states", selectedStateId);
+        if (selectedState) {
+          queryParams.set("states", selectedState);
         }
         if (selectedMakeId) {
           queryParams.set("makes", selectedMakeId);
@@ -794,7 +799,7 @@ const Cars = () => {
                         <input
                           type="checkbox"
                           value={option.value}
-                          checked={selectedEngine_type.includes(option.value)}
+                          checked={selectedEngine_type?.includes(option.value)}
                           onChange={() => handleEngineTypeChange(option)}
                         />
                         {option.label}
