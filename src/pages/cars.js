@@ -117,8 +117,8 @@ const Cars = () => {
     setYearFrom(params.get("year_from" || ""));
     setYearTo(params.get("year_to" || ""));
     setSelectedMakeId(params.get("makes") ? Number(params.get("makes")) : "");
-    console.log({params.get});
-
+    setSelectedCityId(params.get("cities") ? Number(params.get("cities")) : "");
+    console.log(params.get);
   }, [params]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchObject, setSearchObject] = useState({
@@ -226,8 +226,7 @@ const Cars = () => {
     window.history.pushState({}, "", "?" + queryParams.toString());
   };
   const handleMakeChange = (selectedOption) => {
-    // setSelectedMakeId(selectedOption.value);
-    
+    setSelectedMakeId(selectedOption.value);
     const queryParams = new URLSearchParams(window.location.search);
     queryParams.set("makes", selectedOption.value);
     window.history.pushState({}, "", "?" + queryParams.toString());
@@ -235,6 +234,9 @@ const Cars = () => {
   console.log({selectedMakeId});
 
   const handleCityChange = (selectedOptions) => {
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set("cities", selectedOptions.value);
+    window.history.pushState({}, "", "?" + queryParams.toString());
     selectedOptions = Array.isArray(selectedOptions)
       ? selectedOptions
       : [selectedOptions];
@@ -703,7 +705,7 @@ const Cars = () => {
                     className="js-example-responsive"
                     isSearchable
                     value={cityOptions.filter((option) =>
-                      selectedCityId.includes(option.value)
+                      selectedCityId?.includes(option.value)
                     )}
                   />
                 </div>
